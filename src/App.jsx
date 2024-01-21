@@ -5,12 +5,12 @@ function App() {
   const [playing, setPlaying] = useState(false)
 
   return (
-    <>
-      <div>
+    <div className="container">
+      <div className="cellBoard">
         <div className="cell">
         </div>
       </div>
-      <div>
+      <div className="controls">
         <h1>Game of Life</h1>
         <div className="card">
           <button onClick={() => setPlaying(!playing)}>
@@ -18,7 +18,7 @@ function App() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

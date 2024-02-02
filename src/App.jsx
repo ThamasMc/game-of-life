@@ -18,14 +18,57 @@ const App = () => {
       const intervalId = setInterval(simulate, 1001 - speed);
       return () => clearInterval(intervalId);
     }
-  }, [running, speed]);
+  }, [running, speed, grid]);
 
   const simulate = () => {
-    // Implement your Game of Life logic here to update the grid
-    // For simplicity, let's randomly set some cells to alive or dead in this example
-    const newGrid = grid.map(row =>
-      row.map(cell => (Math.random() > 0.7 ? !cell : cell))
-    );
+      // Create a copy of the current grid to avoid directly modifying the state
+    const newGrid = [...grid.map(row => [...row])];
+
+    // Helper function to count live neighbors for a given cell
+    const countLiveNeighbors = (row, col) => {
+      const neighbors = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, -1], [1, 0], [1, 1]
+      ];
+
+      return neighbors.reduce((count, [i, j]) => {
+        const newRow = row + i;
+        const newCol = col + j;
+
+        if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
+          count += grid[newRow][newCol] ? 1 : 0;
+        }
+
+        return count;
+      }, 0);
+    };
+
+    // Apply the rules to each cell in the grid
+    for (let row = 0; row < numRows; row++) {
+      for (let col = 0; col < numCols; col++) {
+        const liveNeighbors = countLiveNeighbors(row, col);
+
+        if (grid[row][col]) {
+          // Live cell rules
+          if (liveNeighbors < 2 || liveNeighbors > 3) {
+            // Rule 1 and Rule 3
+            newGrid[row][col] = false; // Cell dies
+          }
+          // Rule 2
+          // Live cell with 2 or 3 live neighbors lives on
+        } else {
+          // Dead cell rule
+          if (liveNeighbors === 3) {
+            // Rule 4
+            newGrid[row][col] = true; // Cell becomes alive
+          }
+        }
+      }
+    }
+
+    // Update the Grid
+    console.log('setting simulation', newGrid);
     setGrid(newGrid);
   };
 
